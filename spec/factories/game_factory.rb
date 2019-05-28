@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :game do
-    name { Faker::Lorem.words(1).first.capitalize }
+    name { "Badminton" }
     rating_type "trueskill"
     min_number_of_teams 2
     max_number_of_teams 2

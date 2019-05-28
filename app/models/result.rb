@@ -1,6 +1,7 @@
 class Result < ActiveRecord::Base
   has_many :teams
   belongs_to :game, touch: true
+  has_many :events, class_name: "RatingHistoryEvent"
 
   validates :game, presence: true
   scope :most_recent_first, -> { order created_at: :desc }
