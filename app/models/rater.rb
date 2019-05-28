@@ -98,7 +98,7 @@ module Rater
       graph.update_skills
 
       ratings_to_trueskill.each do |rating, trueskill|
-        _update_rating_from_trueskill rating, trueskill result
+        _update_rating_from_trueskill rating, trueskill, result
       end
     end
 
@@ -112,13 +112,19 @@ module Rater
     def _update_rating_from_trueskill rating, trueskill, result
       Rating.transaction do
         attributes = {
-          result: result,
           value: (trueskill.mean - (3.0 * trueskill.deviation)) * 100,
           trueskill_mean: trueskill.mean,
           trueskill_deviation: trueskill.deviation
         }
+
+        original_rating = rating.value
         rating.update_attributes! attributes
-        rating.history_events.create! attributes
+        rating.history_events.create! attributes.merge(result: result)
+        result.rating_changes.create!(
+          player: rating.player,
+          original_rating: original_rating,
+          value: attributes[:value] - original_rating
+        )
       end
     end
   end
