@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 7) do
+ActiveRecord::Schema.define(version: 20190403055851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,6 +39,15 @@ ActiveRecord::Schema.define(version: 7) do
     t.integer "team_id"
   end
 
+  create_table "rating_changes", force: :cascade do |t|
+    t.integer "result_id", null: false
+    t.integer "player_id", null: false
+    t.integer "original_rating", null: false
+    t.integer "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "rating_history_events", id: :serial, force: :cascade do |t|
     t.integer "rating_id", null: false
     t.integer "value", null: false
@@ -46,6 +55,7 @@ ActiveRecord::Schema.define(version: 7) do
     t.datetime "updated_at"
     t.float "trueskill_mean"
     t.float "trueskill_deviation"
+    t.integer "result_id"
     t.index ["rating_id"], name: "index_rating_history_events_on_rating_id"
   end
 

@@ -82,6 +82,7 @@ module Rater
     end
 
     def update_ratings game, teams
+      result = teams.first.result
       ratings_to_ranks = teams.sort_by(&:rank).each_with_object({}){ |team, hash| hash[team.players.map{|player| player.ratings.find_or_create(game)}] = team.rank }
 
       ratings_to_trueskill = {}
@@ -97,7 +98,7 @@ module Rater
       graph.update_skills
 
       ratings_to_trueskill.each do |rating, trueskill|
-        _update_rating_from_trueskill rating, trueskill
+        _update_rating_from_trueskill rating, trueskill, result
       end
     end
 
@@ -108,13 +109,22 @@ module Rater
       )
     end
 
-    def _update_rating_from_trueskill rating, trueskill
+    def _update_rating_from_trueskill rating, trueskill, result
       Rating.transaction do
-        attributes = { value: (trueskill.mean - (3.0 * trueskill.deviation)) * 100,
-                       trueskill_mean: trueskill.mean,
-                       trueskill_deviation: trueskill.deviation }
+        attributes = {
+          value: (trueskill.mean - (3.0 * trueskill.deviation)) * 100,
+          trueskill_mean: trueskill.mean,
+          trueskill_deviation: trueskill.deviation
+        }
+
+        original_rating = rating.value
         rating.update_attributes! attributes
-        rating.history_events.create! attributes
+        rating.history_events.create! attributes.merge(result: result)
+        result.rating_changes.create!(
+          player: rating.player,
+          original_rating: original_rating,
+          value: attributes[:value] - original_rating
+        )
       end
     end
   end

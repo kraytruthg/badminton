@@ -60,6 +60,9 @@
       <% @player.results.for_game(@game).limit(15).order('created_at desc').each do |result| %>
         <li>
           <%= format_time(result.created_at) %>
+          <% if change = result.rating_changes.find_by(player: @player) %>
+            <%= content_tag(:span, "(#{sprintf("%+d", change.value)})", class: amount_class(change.value) ) %>
+          <% end %>
           -
           <% if result.winners.include?(@player) %>
             <% if result.losers.empty? %>
