@@ -7,6 +7,7 @@ class Result < ActiveRecord::Base
   validates :game, presence: true
   scope :most_recent_first, -> { order created_at: :desc }
   scope :for_game, -> (game) { where(game_id: game.id) }
+  scope :by_date, -> (date) { where(created_at: date.beginning_of_day..date.end_of_day) }
 
   validate do |result|
     if result.winners.empty?

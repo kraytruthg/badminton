@@ -40,6 +40,27 @@
     </table>
     <%= link_to "View All", game_ratings_path(@game) %>
   </div>
+
+  <div class="span4">
+    <h2>Daily Standing</h2>
+    <table id='ratings'>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Rating Changes</th>
+          <th>W</th>
+          <th>L</th>
+          <% if @game.allow_ties %>
+              <th>T</th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: 'daily_standing', locals: { date: Date.today, game: @game } %>
+      </tbody>
+    </table>
+    <%= link_to "View All", game_ratings_path(@game) %>
+  </div>
 </div>
 
 <div class="row">

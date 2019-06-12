@@ -52,13 +52,17 @@ class Player < ActiveRecord::Base
     results.where(game_id: game).against(opponent).to_a.count { |r| r.tie? }
   end
 
-  def total_wins(game)
-    results.where(game_id: game, teams: { rank: Team::FIRST_PLACE_RANK }).to_a.count { |r| !r.tie? }
+  def total_wins(game, date = nil)
+    relation = if date
+      results.by_date(date)
+    else
+      results
+    end
+
+    relation.where(game_id: game, teams: { rank: Team::FIRST_PLACE_RANK }).to_a.count { |r| !r.tie? }
   end
 
   def wins(game, opponent)
     results.where(game_id: game, teams: {rank: Team::FIRST_PLACE_RANK}).against(opponent).to_a.count { |r| !r.tie? }
   end
-
-
 end
