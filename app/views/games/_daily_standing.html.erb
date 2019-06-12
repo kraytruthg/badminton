@@ -1,0 +1,21 @@
+<%
+	game.results.by_date(date).joins(:rating_changes).
+		group("results.game_id, rating_changes.player_id").
+		select("count(results.id) as games, rating_changes.player_id, sum(rating_changes.value) as value_changes").
+		order("value_changes DESC").each do |record|
+
+		player = Player.find(record.player_id)
+%>
+		<tr>
+			<td>
+				<div class='player'>
+				<%= image_tag(gravatar_url(player, size: 24)) %>
+				<%= link_to player.name, player_game_path(player, game) %>
+				</div>
+			</td>
+
+			<td><%= record.value_changes %></td>
+			<td><%= wins = player.total_wins(game, date) %></td>
+			<td><%= record.games - wins %></td>
+		</tr>
+<% end %>

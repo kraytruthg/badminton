@@ -83,7 +83,10 @@ module Rater
 
     def update_ratings game, teams
       result = teams.first.result
-      ratings_to_ranks = teams.sort_by(&:rank).each_with_object({}){ |team, hash| hash[team.players.map{|player| player.ratings.find_or_create(game)}] = team.rank }
+      ratings_to_ranks = teams.sort_by(&:rank).each_with_object({}) do |team, hash|
+        team_rating = team.players.map{ |player| player.ratings.find_or_create(game) }
+        hash[team_rating] = team.rank
+      end
 
       ratings_to_trueskill = {}
       trueskills_to_rank = ratings_to_ranks.each_with_object({}) do |(ratings, rank), hash|
