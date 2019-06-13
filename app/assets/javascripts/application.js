@@ -14,3 +14,5 @@
 //= require jquery_ujs
 //= require chosen.min
 //= require_tree .
+//= require chartkick
+//= require Chart.bundle
