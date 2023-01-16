@@ -267,7 +267,7 @@ GEM
     websocket-extensions (0.1.4)
     xray-rails (0.3.2)
       rails (>= 3.1.0)
-    yard (0.9.19)
+    yard (0.9.20)
 
 PLATFORMS
   ruby
